@@ -1,21 +1,25 @@
 import './App.css';
 import { useState } from 'react'
+import HeroInfoSection from './HeroInfoSection'
+import HeroSearch from './HeroSearch'
 function App() {
 
   const [hero, setHero] = useState({})
   const [userInput, setUserInput] = useState('')
+  
+  // gets a random hero from the api
   async function random(){
     try {
         const response = await fetch('https://simple-overwatch-hero-api.herokuapp.com/api/random')
         const data = await response.json()
-        console.log(data)
+        // set hero state to the data received
         setHero({
           name: data.name, 
           birthName: data.birthName, 
           age: data.age, 
           nationality: data.nationality, 
           role: data.role, 
-          health: data.health,
+          health: data.health, 
           img: data.img,
         })
     }
@@ -23,18 +27,13 @@ function App() {
         console.log(err)
     }
     }
-
-
-    function handleChangeUserInput(e){
-      setUserInput(e.target.value)
-    }
-
+  // gets chosen hero from the api
     async function handleSearch(){
       try {
         const choice = userInput.toLowerCase()
         const response = await fetch('https://simple-overwatch-hero-api.herokuapp.com/api/characters/'+choice)
         const data = await response.json()
-
+        // set hero state to the data received
         setHero({
           name: data.name, 
           birthName: data.birthName, 
@@ -50,29 +49,20 @@ function App() {
       }
     }
 
+    function handleChangeUserInput(e){
+      setUserInput(e.target.value)
+    }
+
   return (
     <div className="App">
       <section 
         className="MainSection" 
         style={{  backgroundImage: `url(${hero.img})`}}
       >
-        <h4>Name: {hero.name}</h4>
-        <h4>Birth Name: {hero.birthName}</h4>
-        <h4>Age: {hero.age}</h4>
-        <h4>Nationality: {hero.nationality}</h4>
-        <h4>Role: {hero.role}</h4>
-        <h4>Health: {hero.health}</h4>
-
+        <h1>Overwatch Hero Info</h1>
+        <HeroInfoSection hero={hero} />
         <button onClick={random}>Find Random Hero</button>
-        <form onSubmit={e => e.preventDefault()}>
-          <input 
-            placeholder="enter hero name"
-            value={userInput}
-            onChange={handleChangeUserInput}
-          />
-          <button onClick={handleSearch}>Search</button>
-        </form>
-
+        <HeroSearch handleChangeUserInput={handleChangeUserInput} handleSearch={handleSearch} userInput={userInput} />
       </section>
     </div>
   );
